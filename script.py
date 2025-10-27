@@ -9,7 +9,7 @@ def send_mail(workflow_name, repo_name, workflow_run_id):
     receiver_email = os.getenv('RECEIVER_EMAIL')
 
     if not all([sender_email, sender_password, receiver_email]):
-        print("❌ Missing email credentials! Check your GitHub Secrets.")
+        print(" Missing email credentials! Check your GitHub Secrets.")
         return
 
     subject = f"Workflow {workflow_name} failed for repo {repo_name}"
