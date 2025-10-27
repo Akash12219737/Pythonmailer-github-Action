@@ -31,9 +31,9 @@ def send_mail(workflow_name, repo_name, workflow_run_id):
         server.starttls()
         server.login(sender_email, sender_password)
         server.sendmail(sender_email, receiver_email, msg.as_string())
-        print("✅ Email sent successfully!")
+        print(" Email sent successfully!")
     except Exception as e:
-        print(f"❌ Error sending email: {e}")
+        print(f"Error sending email: {e}")
     finally:
         server.quit()
 
