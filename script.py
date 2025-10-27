@@ -8,10 +8,14 @@ def send_mail(workflow_name, repo_name, workflow_run_id):
     sender_password = os.getenv('SENDER_PASSWORD')
     receiver_email = os.getenv('RECEIVER_EMAIL')
 
+    if not all([sender_email, sender_password, receiver_email]):
+        print("❌ Missing email credentials! Check your GitHub Secrets.")
+        return
+
     subject = f"Workflow {workflow_name} failed for repo {repo_name}"
     body = (
         f"Hi,\n\n"
-        f"The workflow '{workflow_name}' failed for the repository '{repo_name}'. "
+        f"The workflow '{workflow_name}' failed for the repository '{repo_name}'.\n"
         f"Please check the logs for more details.\n\n"
         f"Run ID: {workflow_run_id}\n"
     )
@@ -27,13 +31,12 @@ def send_mail(workflow_name, repo_name, workflow_run_id):
         server.starttls()
         server.login(sender_email, sender_password)
         server.sendmail(sender_email, receiver_email, msg.as_string())
-        print("✅ Email sent successfully")
+        print("✅ Email sent successfully!")
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"❌ Error sending email: {e}")
     finally:
         server.quit()
 
-# ✅ Corrected variable names (uppercase)
 send_mail(
     os.getenv("WORKFLOW_NAME"),
     os.getenv("REPO_NAME"),
