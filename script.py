@@ -1,36 +1,41 @@
 import smtplib
-from email.mime.text import MIMEText # MIMEText is a class that represents the text of the eamil
-from email.mime.multipart import MIMEMultipart #MIMEMultipart is a class that represent the email message itself
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 import os
 
 def send_mail(workflow_name, repo_name, workflow_run_id):
-    # Email details
     sender_email = os.getenv('SENDER_EMAIL')
     sender_password = os.getenv('SENDER_PASSWORD')
-    receiver_email = os.getenv("RECEIVER_EMAIL")
+    receiver_email = os.getenv('RECEIVER_EMAIL')
 
-    # Email message
     subject = f"Workflow {workflow_name} failed for repo {repo_name}"
-    body = f"hi, the workflow {workflow_name} failed for the repo { repo_name}. Please check the logs for more details. \nMore Details: \nRun_ID: {workflow_run_id}"
+    body = (
+        f"Hi,\n\n"
+        f"The workflow '{workflow_name}' failed for the repository '{repo_name}'. "
+        f"Please check the logs for more details.\n\n"
+        f"Run ID: {workflow_run_id}\n"
+    )
 
     msg = MIMEMultipart()
-    msg['From'] = sender_email
-    msg['To'] = receiver_email
-    msg['Subject'] = subject
-    msg.attach(MIMEText(body, 'plain'))
+    msg["From"] = sender_email
+    msg["To"] = receiver_email
+    msg["Subject"] = subject
+    msg.attach(MIMEText(body, "plain"))
 
     try:
-        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server = smtplib.SMTP("smtp.gmail.com", 587)
         server.starttls()
         server.login(sender_email, sender_password)
-        text = msg.as_string()
-        server.sendmail(sender_email, receiver_email, text)
-        server.quit()
-        
-        print('Email sent successfully')
+        server.sendmail(sender_email, receiver_email, msg.as_string())
+        print("✅ Email sent successfully")
     except Exception as e:
-        print(f'Error: {e}')
+        print(f"❌ Error: {e}")
+    finally:
+        server.quit()
 
-
-send_mail(os.getenv('workflow_NAME'), os.getenv('REPO_NAME'), os.getenv('WORKFLOW_RUN_ID'))
-        
+# ✅ Corrected variable names (uppercase)
+send_mail(
+    os.getenv("WORKFLOW_NAME"),
+    os.getenv("REPO_NAME"),
+    os.getenv("WORKFLOW_RUN_ID")
+)
